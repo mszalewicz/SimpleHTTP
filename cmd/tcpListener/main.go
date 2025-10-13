@@ -22,17 +22,11 @@ func main() {
 
 		if err != nil {
 			log.Fatal("error: ", err)
-		} else {
-			fmt.Println("Connection has been accepted")
 		}
 
-		lines := getLinesChannel(conn)
-
-		for line := range lines {
+		for line := range getLinesChannel(conn) {
 			fmt.Println(line)
 		}
-
-		fmt.Println("Connection has been closed")
 	}
 }
 
