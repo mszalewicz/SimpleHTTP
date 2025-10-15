@@ -42,13 +42,41 @@ func parseRequestLine(requestContent string) (*RequestLine, error) {
 	requestParts := strings.Split(requestContent, "\r\n")
 	requestLineParts := strings.Split(requestParts[0], " ")
 
+	// Check if request line contains all 3 required parts
 	if len(requestLineParts) != 3 {
 		return nil, errors.New("Request Line does not contain all required parts.")
 	}
 
-	requestLine.Method = requestLineParts[0]
+	method := requestLineParts[0]
+
+	if !isAllUpperLetters(requestLineParts[0]) {
+		return nil, errors.New("Request method is not correct http method")
+	}
+
+	httpVersion := strings.Split(requestLineParts[2], "/")[1]
+
+	if httpVersion != "1.1" {
+		return nil, errors.New("Invalid http version. We only support 1.1")
+	}
+
+	requestLine.Method = method
 	requestLine.RequestTarget = requestLineParts[1]
-	requestLine.HttpVersion = strings.Split(requestLineParts[2], "/")[1]
+	requestLine.HttpVersion = httpVersion
 
 	return &requestLine, nil
+}
+
+func isAllUpperLetters(word string) bool {
+	if len(word) == 0 {
+		return false
+	}
+
+	for i := 0; i < len(word); i++ {
+		letter := word[i]
+		if letter < 'A' || letter > 'Z' {
+			return false
+		}
+	}
+
+	return true
 }
